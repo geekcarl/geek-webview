@@ -29,3 +29,7 @@
   > webview.callFunc(funName, arg1,arg2...) 
 * 2，原生调用js顶层方法并接收回执（target sdk> 19）： 
   > webview.callFunc(funName, callback, arg1,arg2...) 
+
+
+ ### **UML框架流程图** 
+  <img src='design.png'> 

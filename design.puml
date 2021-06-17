@@ -1,0 +1,173 @@
+@startuml
+title **桥接组件功能UML流程图**
+
+skinparam backgroundColor #EEEBDC
+'skinparam handwritten true
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor blue
+	LifeLineBackgroundColor #A9DC66
+
+'	ParticipantBorderColor DeepSkyBlue
+'	ParticipantBackgroundColor DodgerBlue
+'	ParticipantFontName Impact
+	ParticipantFontSize 20
+'	ParticipantFontColor #A9DCDF
+
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 18
+	ActorFontName Aapex
+}
+
+
+'角色
+participant Activity as app
+participant BridgeWebView as webView
+participant BridgeInterface as androidBridge
+participant BridgeManager as bm
+participant WebViewJavascriptBridge.js as js
+participant H5 as h5
+
+
+'初始化
+== 桥初始化 ==
+autonumber
+app -> webView: loadUrl
+note left: 加载网页开始
+activate app
+activate webView
+webView -> h5 : fetch
+activate h5
+h5 -> webView :pageStart
+deactivate h5
+webView -> webView: pageFinished
+webView -> bm: onBridgeLoad
+deactivate webView
+activate bm
+bm -> js: webViewLoadLocalJs
+activate js
+js -> bm
+deactivate js
+bm -> app
+deactivate bm
+deactivate app
+note left: 桥接加载完成
+
+'H5注册
+== H5注册Handler ==
+autonumber
+h5 -> js: registerHandler(handlerName, handler)
+note right: H5注册handler
+activate h5
+activate js
+js -> js: save handler \n to mMessageHandlers
+h5 <- js
+deactivate js
+deactivate h5
+
+
+'原生调用H5
+== 原生调用H5 handler ==
+autonumber
+app -> webView: callHandler(handlerName, data, callback)
+note left: 原生调用handler开始
+activate app
+activate webView
+webView -> bm: call(handlerName, data, callback)
+deactivate webView
+activate bm
+bm -> bm: doSend
+bm -> bm: save CallBackWrapper to HashMap
+bm -> bm: queueMessage
+bm -> webView: dispatchMessage
+deactivate bm
+activate webView
+webView -> js: evaluateJavascript(javascript:_dispatchMessageFromNative)
+deactivate webView
+activate js
+js -> js : _dispatchMessageFromNative
+js -> h5 : callHandler(data,callback)
+deactivate js
+activate h5
+h5 -> h5: 接收数据，处理逻辑
+js <- h5: callback(data)
+deactivate h5
+activate js
+
+js -> js: _doSend(response, data, callbackId)
+js -> androidBridge: response(data, responseId)
+deactivate js
+activate androidBridge
+androidBridge -> bm: receiveResponseFromWeb
+deactivate androidBridge
+activate bm
+bm -> bm: get CallBackWrapper \nfrom mCallbacks by responseId
+bm -> bm: call CallBackWrapper.callback
+bm -> bm: remove CallBackWrapper
+
+bm -> webView: callback(data)
+deactivate bm
+activate webView
+
+webView -> app: callback(data)
+deactivate webView
+deactivate app
+note left: 原生调用handler完成
+
+'注册
+== 原生注册Handler ==
+autonumber
+app -> webView: registerHandler(handlerName, handler)
+note left: 原生注册handler
+activate app
+activate webView
+webView -> bm: register(handlerName, handler)
+activate bm
+bm -> bm: save HandlerWrapper \n to mMessageHandlers
+bm -> webView
+deactivate bm
+webView -> app
+deactivate webView
+deactivate app
+
+'H5调原生
+== H5调用原生 handler ==
+autonumber
+h5 -> js: callHandler(handlerName, data, callback)
+note right: H5调用原生handler开始
+activate h5
+activate js
+js -> js : _doSend(handlerName, data, callback)
+js -> androidBridge: send(handlerName, data, callbackId)
+deactivate js
+activate androidBridge
+androidBridge -> bm: receiveMessageFromWeb(handlerName, data, callbackId)
+deactivate androidBridge
+activate bm
+bm -> bm: get handler \n from mMessageHandlers
+bm -> app: call handler
+deactivate bm
+activate app
+app -> app: handler.hand(data, callback)
+app -> app: 接收数据，处理逻辑
+app -> bm: callback(feedbackData)
+deactivate app
+activate bm
+bm -> bm: sendResponse(respData, callbackId)
+bm -> webView: dispatchMessage
+deactivate bm
+activate webView
+webView -> js: evaluateJavascript(javascript:_dispatchMessageFromNative)
+deactivate webView
+activate js
+js -> js : _dispatchMessageFromNative
+js -> js : find callback \nfrom responseCallbacks by responseId
+js -> h5: callback(data)
+deactivate js
+deactivate h5
+note right: H5调用原生handler结束
+
+@enduml
