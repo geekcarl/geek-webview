@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Bridge测试页面</title>
+    <script>
+
+//Android 交互声明
+function connectWebViewJavascriptBridgeANDROID (callback) {
+  if (window.WebViewJavascriptBridge) {
+    callback(WebViewJavascriptBridge)
+  } else {
+    document.addEventListener(
+      'WebViewJavascriptBridgeReady',
+      function () {
+        callback(WebViewJavascriptBridge)
+      },
+      false
+    )
+  }
+}
+
+  //H5调用Native
+  function callHandler (name, data, callback) {
+    connectWebViewJavascriptBridgeANDROID(function (bridge) {
+        bridge.callHandler(name, data, callback)
+      })
+  }
+  //Native调用H5
+  function registerHandler (name, callback) {
+    connectWebViewJavascriptBridgeANDROID(function (bridge) {
+        bridge.init(function (message, responseCallback) {
+            show('接收到数据：' + message)
+          if (responseCallback) {
+            // 默认数据回调直接返回数据，以示尊重
+            responseCallback(message);
+          }
+        })
+        bridge.registerHandler(name, function (data, responseCallback) {
+          callback(data, responseCallback)
+        })
+      })
+  }
+
+      function show(msg1,msg2,msg3) {
+        var content = msg1;
+        if(msg2) {
+            content += " " + msg2;
+        }
+        if(msg3) {
+            content += " " + msg3;
+        }
+      document.getElementById("show").innerHTML = ("来自Native ：" + content);
+    }
+
+    </script>
+</head>
+<body>
+
+<script>
+
+
+
+     function callNative1() {
+     var data = {
+        name: "我是H5",
+        content: "我是H5内容哈哈"
+     }
+        callHandler("callNative1", data, function(data) {
+            show(data)
+        })
+    }
+
+    function callNative2() {
+        callHandler("callNative2","我是H5消息callNative2", function(data) {
+           show(data)
+        })
+    }
+
+    function callNative3() {
+        callHandler("callNative3","我是H5消息callNative3", function(data) {
+           show(data)
+        })
+    }
+
+    function jsFunc1(arg1,arg2,arg3) {
+        show(arg1,arg2,arg3)
+    }
+
+    function jsFunc2(arg1,arg2,arg3) {
+        show(arg1,arg2,arg3)
+        return true
+    }
+
+   registerHandler("callH5Send1", function(data, callback) {
+            show("callH5Send1->" + data);
+            var feedBack = [
+                "111",
+                "23232"
+            ];
+            if(callback) callback(feedBack);
+   });
+
+   registerHandler("callH5Send2", function(data, callback) {
+            show("callH5Send2 : = " + data);
+            var feedBack = 100.11
+            if(callback) callback(feedBack);
+   });
+
+   registerHandler("callH5Handler1", function(data, callback) {
+            show("callH5Handler1 : = " + data);
+            var feedBack = [1,2,3,4,5];
+            console.log("feedBack -> " + feedBack)
+            if(callback) callback(feedBack);
+   });
+
+   registerHandler("callH5Handler2", function(data, callback) {
+            show("callH5Send2 : = " + data);
+            var feedBack = {
+                key1: "title哈哈",
+                key2: "title2",
+                key3: "title3",
+            }
+            if(callback) callback(feedBack);
+   });
+
+    function test(v1,v2,v3,v4,v5) {
+        alert(v1,v2,v3)
+        console.log("data ------- " + v1 + ","+ v2 + "," + v3)
+        return v5
+    }
+</script>
+<div>
+
+    <p>
+        测试web发消息给原生<br>
+        <button type="button" onclick="callNative1()">callNative1</button>
+        <button type="button" onclick="callNative2()">callNative2</button>
+        <button type="button" onclick="callNative3()">callNative3（未注册）</button>
+    </p>
+
+    <p>
+        <a id="show">
+        </a>
+    </p>
+
+    <br><br>
+</div>
+</body>

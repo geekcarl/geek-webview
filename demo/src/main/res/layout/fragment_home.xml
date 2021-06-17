@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="onClick"
+            type="android.view.View.OnClickListener" />
+
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:foregroundGravity="top"
+            tools:context=".ui.home.HomeFragment">
+
+            <TextView
+                android:id="@+id/lable1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/teal_200"
+                android:padding="10dp"
+                android:text="H5页面"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.geekcarl.android.webview.GeekBridgeWebView
+                android:id="@+id/bridgeWeb"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_percent=".4"
+                app:layout_constraintTop_toBottomOf="@id/lable1" />
+
+            <TextView
+                android:id="@+id/lable2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/teal_200"
+                android:padding="10dp"
+                android:text="原生"
+                android:textColor="@color/black"
+                app:layout_constraintTop_toBottomOf="@id/bridgeWeb" />
+
+            <TextView
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@id/lable2"
+                tools:text="测试消息显示" />
+
+            <Button
+                android:id="@+id/send1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="4dp"
+                android:onClick="@{onClick}"
+                android:text="直接发送"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/content" />
+
+            <Button
+                android:id="@+id/send2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:onClick="@{onClick}"
+                android:text="发送并回执"
+                app:layout_constraintLeft_toRightOf="@id/send1"
+                app:layout_constraintTop_toTopOf="@id/send1" />
+
+            <Button
+                android:id="@+id/callFun1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:onClick="@{onClick}"
+                android:text="执行方法"
+                app:layout_constraintLeft_toLeftOf="@id/send1"
+                app:layout_constraintTop_toBottomOf="@id/send1" />
+
+            <Button
+                android:id="@+id/callFun2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:onClick="@{onClick}"
+                android:text="执行方法并回执"
+                app:layout_constraintLeft_toRightOf="@id/callFun1"
+                app:layout_constraintTop_toTopOf="@id/callFun1" />
+
+            <Button
+                android:id="@+id/callHandler1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:onClick="@{onClick}"
+                android:text="调用H5方法"
+                app:layout_constraintLeft_toLeftOf="@id/callFun1"
+                app:layout_constraintTop_toBottomOf="@id/callFun1" />
+
+            <Button
+                android:id="@+id/callHandler2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:onClick="@{onClick}"
+                android:text="调用H5方法2"
+                app:layout_constraintLeft_toRightOf="@id/callHandler1"
+                app:layout_constraintTop_toTopOf="@id/callHandler1" />
+
+            <Button
+                android:id="@+id/callHandlerNotFound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:onClick="@{onClick}"
+                android:text="调用H5方法未找到"
+                app:layout_constraintLeft_toLeftOf="@id/callHandler1"
+                app:layout_constraintTop_toBottomOf="@id/callHandler1" />
+
+
+            <View
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:layout_constraintLeft_toLeftOf="@id/callHandlerNotFound"
+                app:layout_constraintTop_toBottomOf="@id/callHandlerNotFound" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>
