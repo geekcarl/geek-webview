@@ -37,6 +37,7 @@ dependencies {
     api 'com.tencent.tbs.tbssdk:sdk:43967'
 
     api project(':bridge')
+//    api 'com.geekcarl.android.webview:bridge:1.1.4'
 }
 
 uploadArchives {

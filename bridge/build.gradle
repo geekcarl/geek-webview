@@ -39,9 +39,7 @@ dependencies {
 uploadArchives {
     repositories.mavenDeployer {
         // 账号密码 从本地全局配置读取
-        repository(url: MAVEN_ADDR) {
-            authentication(userName: MAVEN_USRNAME, password: MAVEN_PWD)
-        }
+        repository(url: LOCAL_MAVEN)
         pom.groupId = 'com.geekcarl.android.webview'
         pom.artifactId = 'bridge'
         pom.version = '1.1.4'

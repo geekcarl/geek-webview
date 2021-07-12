@@ -13,6 +13,7 @@ open class GeekBridgeWebView : X5WebView, IWebView, IBridgeNative {
     private val TAG = "GeekBridgeWebView"
     lateinit var mBridgeHandler: IBridgeHandler
     lateinit var mBridgeNative: IBridgeNative
+    private var mBridgeLoader: IBridgeLoader? = null
 
     constructor(context: Context?, attrs: AttributeSet?) : super(
         context,
@@ -34,15 +35,19 @@ open class GeekBridgeWebView : X5WebView, IWebView, IBridgeNative {
     }
 
     private fun init() {
-        val bridgeManager = BridgeManager(this)
-        mBridgeHandler = bridgeManager
-        mBridgeNative = bridgeManager
+        BridgeManager(this).let {
+            mBridgeHandler = it
+            mBridgeNative = it
+            mBridgeLoader = it
+        }
+        webViewClient = buildWebViewClientBridgeBind(webViewClient)
+    }
 
-        val currentClient: WebViewClient? = webViewClient
-        webViewClient = currentClient.let {
+    private fun buildWebViewClientBridgeBind(client: WebViewClient?): WebViewClientProxy {
+        return client.let {
             if (it is WebViewClientProxy) it else WebViewClientProxy(it)
         }.apply {
-            this.setBridgeLoader(bridgeManager)
+            this.setBridgeLoader(mBridgeLoader)
         }
     }
 
@@ -50,8 +55,8 @@ open class GeekBridgeWebView : X5WebView, IWebView, IBridgeNative {
         if (client is WebViewClientProxy) {
             super.setWebViewClient(client)
         } else {
-            Log.d(TAG, "add WebViewClient to Proxy")
-            super.setWebViewClient(WebViewClientProxy(client))
+            Log.d(TAG, "setWebViewClientBridgeBind")
+            super.setWebViewClient(buildWebViewClientBridgeBind(client))
         }
     }
 
