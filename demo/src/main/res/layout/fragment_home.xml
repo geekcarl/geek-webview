@@ -32,7 +32,7 @@
                 android:textColor="@color/black"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.geekcarl.android.webview.GeekBridgeWebView
+            <io.github.geekcarl.webview.GeekBridgeWebView
                 android:id="@+id/bridgeWeb"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
