@@ -4,6 +4,14 @@
 
  ### **使用**
 * 1，添加依赖
+```java
+  // 如果有自己的webview，想拥有桥接能力  
+  implementation 'io.github.geekcarl:webview-bridge:$lasted_version'
+  
+  // 如果想直接使用桥接Webview（使用x5 webview）
+  implementation 'io.github.geekcarl:webview:$lasted_version'
+  
+```
 * 2，设置json转化代理（如果bean类使用kotlin编写，必须使用google gson做转化），
   > JsonHandlerProxy.setProxy(proxy)
 * 3，使用GeekBridgeWebView 加载页面
